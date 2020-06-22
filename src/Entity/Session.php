@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SessionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,10 +39,23 @@ class Session
      */
     private $nbPlaceTheorique;
 
+
+
     /**
-     * @ORM\ManyToOne(targetEntity=Programme::class, inversedBy="session")
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="session")
      */
-    private $programme;
+    private $users;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Programme::class, mappedBy="session")
+     */
+    private $programmes;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+        $this->programmes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -95,15 +110,63 @@ class Session
         return $this;
     }
 
-    public function getProgramme(): ?Programme
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
-        return $this->programme;
+        return $this->users;
     }
 
-    public function setProgramme(?Programme $programme): self
+    public function addUser(User $user): self
     {
-        $this->programme = $programme;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addSession($this);
+        }
 
         return $this;
     }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            $user->removeSession($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Programme[]
+     */
+    public function getProgrammes(): Collection
+    {
+        return $this->programmes;
+    }
+
+    public function addProgramme(Programme $programme): self
+    {
+        if (!$this->programmes->contains($programme)) {
+            $this->programmes[] = $programme;
+            $programme->setSession($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            $this->programmes->removeElement($programme);
+            // set the owning side to null (unless already changed)
+            if ($programme->getSession() === $this) {
+                $programme->setSession(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

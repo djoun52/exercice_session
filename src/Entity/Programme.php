@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProgrammeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Session;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProgrammeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=ProgrammeRepository::class)
@@ -25,14 +26,19 @@ class Programme
     private $nbJour;
 
     /**
-     * @ORM\OneToMany(targetEntity=Modules::class, mappedBy="programme")
+     * @ORM\ManyToOne(targetEntity=Modules::class, inversedBy="programmes")
      */
     private $module;
 
     /**
-     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="programme")
+     * @ORM\ManyToOne(targetEntity=Session::class, inversedBy="programmes")
      */
     private $session;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Modules::class, inversedBy="programme")
+     */
+ 
 
     public function __construct()
     {
@@ -57,65 +63,29 @@ class Programme
         return $this;
     }
 
-    /**
-     * @return Collection|Modules[]
-     */
-    public function getModule(): Collection
+    public function getModule(): ?Modules
     {
         return $this->module;
     }
 
-    public function addModule(Modules $module): self
+    public function setModule(?Modules $module): self
     {
-        if (!$this->module->contains($module)) {
-            $this->module[] = $module;
-            $module->setProgramme($this);
-        }
+        $this->module = $module;
 
         return $this;
     }
 
-    public function removeModule(Modules $module): self
-    {
-        if ($this->module->contains($module)) {
-            $this->module->removeElement($module);
-            // set the owning side to null (unless already changed)
-            if ($module->getProgramme() === $this) {
-                $module->setProgramme(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Session[]
-     */
-    public function getSession(): Collection
+    public function getSession(): ?Session
     {
         return $this->session;
     }
 
-    public function addSession(Session $session): self
+    public function setSession(?Session $session): self
     {
-        if (!$this->session->contains($session)) {
-            $this->session[] = $session;
-            $session->setProgramme($this);
-        }
+        $this->session = $session;
 
         return $this;
     }
 
-    public function removeSession(Session $session): self
-    {
-        if ($this->session->contains($session)) {
-            $this->session->removeElement($session);
-            // set the owning side to null (unless already changed)
-            if ($session->getProgramme() === $this) {
-                $session->setProgramme(null);
-            }
-        }
 
-        return $this;
-    }
 }

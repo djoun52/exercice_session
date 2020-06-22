@@ -1,0 +1,27 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    
+}
+
+#wrapper{
+    max-width: 1280px;
+    margin: auto;
+    /* padding-top: 1em; */
+}
+
+#fiche{
+    margin-top: 2em;
+}
+#fiche_contenu{
+    margin-left: 2em;
+}
+
+td, th {
+
+    text-align: center;
+
+  }

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello
+{% endblock %}
+
+{% block body %}
+
+
+    {{ dump(users) }}
+<table class="table table-hover">
+		<thead>
+			<tr class="table-info">
+				<th scope="col">Utilisateurs</th>
+				<th scope="col">Email</th>
+				<th scope="col">Sexe</th>
+				<th scope="col">Role</th>
+				<th scope="col">Date de naissance</th>
+				<th scope="col">Ville</th>
+				<th scope="col">téléphone</th>
+
+			</tr>
+		</thead>
+		<tbody>
+
+
+			{% for user in users %}
+
+				<tr>
+					<td>
+						<a href="{{ path('stagiaire_show', {id: user.id}) }}">{{user.prenom}}
+							{{user.nom}}</a>
+					</td>
+					<td>{{ user.email }}</td>
+					<td>{{ user.sex }}</td>
+					<td>
+						{% for role in user.roles %}
+							{{ role | replace({"ROLE_":"","USER":"utilisateur","ADMIN":"administrateur"}) }}
+							<br>
+						{% endfor %}
+					</td>
+					<td>{{user.dateDeNaissance | date('d/m/Y')}}</td>
+					<td>{{ user.ville }}</td>
+					<td>{{ user.telephone }}</td>
+				</tr>
+
+			{% endfor %}
+		</tbody>
+
+	</table>
+
+       
+   
+
+{% endblock %}

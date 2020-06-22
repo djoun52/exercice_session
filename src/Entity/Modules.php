@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ModulesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,9 +31,16 @@ class Modules
     private $categorie;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Programme::class, inversedBy="module")
+     * @ORM\OneToMany(targetEntity=Programme::class, mappedBy="module")
      */
-    private $programme;
+    private $programmes;
+
+    public function __construct()
+    {
+        $this->programmes = new ArrayCollection();
+    }
+
+
 
     public function getId(): ?int
     {
@@ -62,15 +71,36 @@ class Modules
         return $this;
     }
 
-    public function getProgramme(): ?Programme
+    /**
+     * @return Collection|Programme[]
+     */
+    public function getProgrammes(): Collection
     {
-        return $this->programme;
+        return $this->programmes;
     }
 
-    public function setProgramme(?Programme $programme): self
+    public function addProgramme(Programme $programme): self
     {
-        $this->programme = $programme;
+        if (!$this->programmes->contains($programme)) {
+            $this->programmes[] = $programme;
+            $programme->setModule($this);
+        }
 
         return $this;
     }
+
+    public function removeProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            $this->programmes->removeElement($programme);
+            // set the owning side to null (unless already changed)
+            if ($programme->getModule() === $this) {
+                $programme->setModule(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }
